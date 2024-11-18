@@ -19,15 +19,12 @@ import pickle
 import warnings
 from tqdm import tqdm
 import os
-from datetime import datetime
 
 warnings.filterwarnings('ignore')
 
 class VisualizationManager:
     def __init__(self):
-        # Create visualization directory with timestamp
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        self.viz_dir = f'visualizations_{timestamp}'
+        self.viz_dir = f'visualizations'
         self.create_directories()
         
     def create_directories(self):
