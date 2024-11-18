@@ -28,14 +28,14 @@ class VisualizationManager:
         self.create_directories()
         
     def create_directories(self):
-        """Create necessary directories for visualizations."""
+        """Creating necessary directories for visualizations."""
         subdirs = ['correlations', 'distributions', 'model_performance', 'feature_analysis', 'pca']
         os.makedirs(self.viz_dir, exist_ok=True)
         for subdir in subdirs:
             os.makedirs(os.path.join(self.viz_dir, subdir), exist_ok=True)
             
     def save_plot(self, subdir, filename):
-        """Save current plot to appropriate subdirectory."""
+        """Saving current plot to appropriate subdirectory."""
         filepath = os.path.join(self.viz_dir, subdir, filename)
         plt.savefig(filepath, bbox_inches='tight', dpi=300)
         plt.close()
@@ -98,16 +98,16 @@ class HeartDiseaseAnalyzer:
             },
             'heart_2022_no_nans.csv': {
                 'target': 'HadHeartAttack',
-                'features': None  # Use original column names
+                'features': None  
             },
             'heart_2022_with_nans.csv': {
                 'target': 'HadHeartAttack',
-                'features': None  # Use original column names
+                'features': None 
             }
         }
     
     def get_target_column(self, file_path):
-        """Get the appropriate target column name for the dataset."""
+        """Getting the appropriate target column name for the dataset."""
         return self.column_mappings[file_path]['target']
     
     def standardize_columns(self, df, file_path):
@@ -121,7 +121,7 @@ class HeartDiseaseAnalyzer:
         return df, None
     
     def encode_categorical_for_correlation(self, df):
-        """Encode categorical variables for correlation analysis."""
+        """Encoding categorical variables for correlation analysis."""
         df_encoded = df.copy()
         
         # Encode target variable
@@ -144,9 +144,9 @@ class HeartDiseaseAnalyzer:
         return df_encoded
     
     def load_and_analyze_data(self):
-        """Load and perform initial analysis on all datasets."""
+        """Loading and performing initial analysis on all datasets."""
         for file_path in self.file_paths:
-            print(f"\nAnalyzing {file_path}...")
+            print(f"\nAnalyzing {file_path}")
             
             # Load data
             df = pd.read_csv(file_path)
@@ -197,7 +197,7 @@ class HeartDiseaseAnalyzer:
             print(feature_importance.head(10))
     
     def preprocess_data(self, df):
-        """Preprocess the data with appropriate cleaning and encoding."""
+        """Preprocessing the data with appropriate cleaning and encoding."""
         df_processed = df.copy()
         label_encoders = {}
         
@@ -213,7 +213,7 @@ class HeartDiseaseAnalyzer:
         
         for col in categorical_columns:
             if col == target_col:
-                # Skip target column as it will be handled separately
+                # Skip target column - handled separately
                 continue
             elif set(df_processed[col].unique()) == {'Yes', 'No'}:
                 # Binary categorical variables
@@ -237,7 +237,7 @@ class HeartDiseaseAnalyzer:
         return df_processed, label_encoders
 
     def apply_pca(self, X, n_components=0.95):
-        """Apply PCA and visualize results."""
+        """Applying PCA and visualizing results."""
         pca = PCA(n_components=n_components)
         X_pca = pca.fit_transform(X)
         
@@ -259,14 +259,14 @@ class HeartDiseaseAnalyzer:
         return X_pca, pca
     
     def create_evaluation_pipeline(self, model):
-        """Create a pipeline with SMOTE and the model."""
+        """Pipeline with SMOTE and the model"""
         return ImbPipeline([
             ('smote', SMOTE(random_state=42)),
             ('classifier', model)
         ])
     
     def evaluate_model_with_cv(self, X, y, model_name, model):
-        """Evaluate model using 5-fold cross-validation with SMOTE."""
+        """Evaluation of model using 3-fold cross-validation with SMOTE"""
         pipeline = self.create_evaluation_pipeline(model)
         kfold = KFold(n_splits=3, shuffle=True, random_state=42)
         
@@ -308,14 +308,13 @@ class HeartDiseaseAnalyzer:
         return fold_metrics
     
     def analyze_dataset(self, file_path):
-        """Analyze a single dataset completely."""
+        """Analyzing individual datasets completely."""
         print(f"\nAnalyzing dataset: {file_path}")
         
-        # Get the data
         df = self.dataframes[file_path]['standardized']
         target_col = self.get_target_column(file_path)
         
-        # First ensure target is binary
+        # target is binary
         if target_col == 'HeartDisease':
             y = (df[target_col] == 'Yes').astype(int)
         elif target_col == 'HadHeartAttack':
@@ -323,12 +322,12 @@ class HeartDiseaseAnalyzer:
         else:
             y = df[target_col]
             
-        # Then preprocess features
+        # preprocess features
         X = df.drop(target_col, axis=1)
         df_processed, label_encoders = self.preprocess_data(pd.concat([X, pd.Series(y, name=target_col)], axis=1))
         X = df_processed.drop(target_col, axis=1)
         
-        # Apply PCA
+        # PCA
         X_pca, pca = self.apply_pca(X)
         X_pca = np.array(X_pca)
         y = np.array(y)
@@ -336,7 +335,7 @@ class HeartDiseaseAnalyzer:
         print("\nClass distribution in target:")
         print(pd.Series(y).value_counts(normalize=True))
         
-        # Evaluate each model
+        # Evaluating each model
         model_results = {}
         
         for model_name, model in tqdm(self.models.items(), desc="Evaluating models"):
@@ -360,8 +359,7 @@ class HeartDiseaseAnalyzer:
         return model_results, pca, label_encoders
 
     def run_complete_analysis(self):
-        """Run complete analysis on all datasets."""
-        # First load and analyze all datasets
+        """Complete analysis on all datasets."""
         self.load_and_analyze_data()
         
         # Analyze each dataset
@@ -373,9 +371,8 @@ class HeartDiseaseAnalyzer:
             
             model_results, pca, label_encoders = self.analyze_dataset(file_path)
             
-            # Find best model for this dataset
-            best_model_name = max(model_results.items(), 
-                                key=lambda x: x[1]['avg_accuracy'])[0]
+            # Finding best model for this dataset
+            best_model_name = max(model_results.items(), key=lambda x: x[1]['avg_accuracy'])[0]
             
             all_results[file_path] = {
                 'model_results': model_results,
@@ -384,7 +381,7 @@ class HeartDiseaseAnalyzer:
                 'label_encoders': label_encoders
             }
             
-            # Save best model for this dataset
+            # Saving best model for this dataset
             best_model_data = {
                 'model': self.models[best_model_name],
                 'pca': pca,
@@ -395,11 +392,9 @@ class HeartDiseaseAnalyzer:
             with open(filename, 'wb') as f:
                 pickle.dump(best_model_data, f)
             
-            # Create visualizations for this dataset
-            self.visualize_distributions(self.dataframes[file_path]['standardized'], 
-                                      file_path.split('.')[0])
-            self.visualize_model_performance(all_results[file_path], 
-                                          file_path.split('.')[0])
+            # Visualizations for this dataset
+            self.visualize_distributions(self.dataframes[file_path]['standardized'], file_path.split('.')[0])
+            self.visualize_model_performance(all_results[file_path], file_path.split('.')[0])
             
             print(f"\nBest model for {file_path}: {best_model_name}")
             print(f"Average Accuracy: {model_results[best_model_name]['avg_accuracy']:.4f}")
@@ -415,7 +410,7 @@ class HeartDiseaseAnalyzer:
         return all_results
 
     def visualize_distributions(self, df, dataset_name):
-        """Visualize distributions of numerical features."""
+        """Visualize distributions of numerical features"""
         numerical_cols = df.select_dtypes(include=['int64', 'float64']).columns
         target_col = self.get_target_column(dataset_name + '.csv')
         
@@ -451,14 +446,14 @@ class HeartDiseaseAnalyzer:
         self.viz_manager.save_plot('model_performance', f'roc_auc_comparison_{dataset_name}.png')
 
     def analyze_feature_differences(self):
-        """Analyze differences between 2020 and 2022 datasets."""
+        """Analyzing differences between 2020 and 2022 datasets."""
         df_2020 = self.dataframes['heart_2020_cleaned.csv']['standardized']
         df_2022 = self.dataframes['heart_2022_no_nans.csv']['standardized']
         
         target_2020 = self.get_target_column('heart_2020_cleaned.csv')
         target_2022 = self.get_target_column('heart_2022_no_nans.csv')
         
-        # Compare features
+        # Comparing features
         features_2020 = set(df_2020.columns) - {target_2020}
         features_2022 = set(df_2022.columns) - {target_2022}
         
@@ -466,7 +461,7 @@ class HeartDiseaseAnalyzer:
         unique_2022 = features_2022 - features_2020
         common_features = features_2020.intersection(features_2022)
         
-        # Analyze impact of common features
+        # Analyzing impact of common features
         feature_impact = {}
         for feature in common_features:
             if feature not in [target_2020, target_2022]:
@@ -505,7 +500,7 @@ class HeartDiseaseAnalyzer:
         }
 
     def visualize_feature_differences(self, feature_impact):
-        """Create visualizations for feature differences."""
+        """Creating visualizations for feature differences."""
         # 1. Correlation Difference Plot
         plt.figure(figsize=(15, 8))
         features = list(feature_impact.keys())
@@ -536,7 +531,7 @@ class HeartDiseaseAnalyzer:
         self.viz_manager.save_plot('feature_analysis', 'correlation_comparison.png')
 
     def save_analysis_report(self, feature_differences, all_results):
-        """Save comprehensive analysis report."""
+        """Saving comprehensive analysis report."""
         report = []
         
         # Feature Differences Section
@@ -581,7 +576,6 @@ class HeartDiseaseAnalyzer:
             f.write('\n'.join(report))
 
 def main():
-    # Define file paths
     file_paths = [
         'heart_2020_cleaned.csv',
         'heart_2022_no_nans.csv',
@@ -591,7 +585,7 @@ def main():
     # Create analyzer instance
     analyzer = HeartDiseaseAnalyzer(file_paths)
     
-    # Run complete analysis
+    # To run complete analysis
     all_results = analyzer.run_complete_analysis()
     
     print(f"\nAnalysis complete. Results saved in: {analyzer.viz_manager.viz_dir}")
