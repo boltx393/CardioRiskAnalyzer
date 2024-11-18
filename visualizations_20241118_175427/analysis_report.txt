@@ -1,0 +1,159 @@
+FEATURE ANALYSIS BETWEEN 2020 AND 2022 DATASETS
+==================================================
+
+Unique Features in 2020:
+
+Unique Features in 2022:
+- HadAngina
+- DifficultyErrands
+- HadCOPD
+- HeightInMeters
+- PneumoVaxEver
+- WeightInKilograms
+- BlindOrVisionDifficulty
+- TetanusLast10Tdap
+- ChestScan
+- HadDepressiveDisorder
+- HadArthritis
+- CovidPos
+- State
+- RemovedTeeth
+- FluVaxLast12
+- LastCheckupTime
+- DifficultyConcentrating
+- DifficultyDressingBathing
+- HighRiskLastYear
+- HIVTesting
+- DeafOrHardOfHearing
+- ECigaretteUsage
+
+Most Impactful Common Features (by correlation difference):
+
+SmokerStatus:
+  2020 correlation: -0.1078
+  2022 correlation: 0.0390
+  Absolute difference: 0.1468
+
+HadSkinCancer:
+  2020 correlation: -0.0933
+  2022 correlation: -0.0494
+  Absolute difference: 0.0439
+
+AlcoholDrinkers:
+  2020 correlation: 0.0321
+  2022 correlation: 0.0742
+  Absolute difference: 0.0421
+
+DifficultyWalking:
+  2020 correlation: -0.2013
+  2022 correlation: -0.1599
+  Absolute difference: 0.0414
+
+PhysicalHealthDays:
+  2020 correlation: 0.1707
+  2022 correlation: 0.1334
+  Absolute difference: 0.0373
+
+GeneralHealth:
+  2020 correlation: -0.1160
+  2022 correlation: -0.0799
+  Absolute difference: 0.0361
+
+HadKidneyDisease:
+  2020 correlation: -0.1452
+  2022 correlation: -0.1094
+  Absolute difference: 0.0358
+
+HadDiabetes:
+  2020 correlation: -0.1710
+  2022 correlation: -0.1367
+  Absolute difference: 0.0343
+
+AgeCategory:
+  2020 correlation: -0.0754
+  2022 correlation: -0.0531
+  Absolute difference: 0.0223
+
+BMI:
+  2020 correlation: 0.0518
+  2022 correlation: 0.0304
+  Absolute difference: 0.0214
+
+
+MODEL PERFORMANCE COMPARISON
+==================================================
+
+heart_2020_cleaned.csv:
+------------------------------
+
+Logistic Regression:
+  Average Accuracy: 0.7214
+  Average AUC-ROC: 0.8158
+
+Random Forest:
+  Average Accuracy: 0.8456
+  Average AUC-ROC: 0.7864
+
+Decision Tree:
+  Average Accuracy: 0.8099
+  Average AUC-ROC: 0.6190
+
+XGBoost:
+  Average Accuracy: 0.7324
+  Average AUC-ROC: 0.8270
+
+KNN:
+  Average Accuracy: 0.7802
+  Average AUC-ROC: 0.7226
+
+Best Model: Random Forest
+
+heart_2022_no_nans.csv:
+------------------------------
+
+Logistic Regression:
+  Average Accuracy: 0.8159
+  Average AUC-ROC: 0.8727
+
+Random Forest:
+  Average Accuracy: 0.9178
+  Average AUC-ROC: 0.8693
+
+Decision Tree:
+  Average Accuracy: 0.8426
+  Average AUC-ROC: 0.6701
+
+XGBoost:
+  Average Accuracy: 0.8343
+  Average AUC-ROC: 0.8709
+
+KNN:
+  Average Accuracy: 0.8237
+  Average AUC-ROC: 0.7689
+
+Best Model: Random Forest
+
+heart_2022_with_nans.csv:
+------------------------------
+
+Logistic Regression:
+  Average Accuracy: 0.6482
+  Average AUC-ROC: 0.7603
+
+Random Forest:
+  Average Accuracy: 0.8459
+  Average AUC-ROC: 0.7690
+
+Decision Tree:
+  Average Accuracy: 0.8033
+  Average AUC-ROC: 0.5969
+
+XGBoost:
+  Average Accuracy: 0.6873
+  Average AUC-ROC: 0.7812
+
+KNN:
+  Average Accuracy: 0.7940
+  Average AUC-ROC: 0.6467
+
+Best Model: Random Forest
