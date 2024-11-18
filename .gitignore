@@ -1,0 +1,4 @@
+# Ignore specific CSV files
+heart_2020_cleaned.csv
+heart_2022_no_nans.csv
+heart_2022_with_nans.csv
